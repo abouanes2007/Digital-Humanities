@@ -816,6 +816,10 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);overfl
         <button class="ntab" onclick="setNlp('sent',this)">تحليل المشاعر</button>
         <button class="ntab" onclick="setNlp('ner',this)">استخراج الكيانات</button>
         <button class="ntab" onclick="setNlp('cls',this)">تصنيف النص</button>
+        <button class="ntab" onclick="setNlp('syn',this)">الوسم النحوي</button>
+        <button class="ntab" onclick="setNlp('sem',this)">الوسم الدلالي</button>
+        <button class="ntab" onclick="setNlp('rhet',this)">الوسم البلاغي</button>
+        <button class="ntab" onclick="setNlp('sty',this)">الوسم الأسلوبي</button>
       </div>
       <div id="nlp-tok">
         <label class="nlp-label">أدخل نصاً عربياً للتقطيع والوسم الصرفي</label>
@@ -840,6 +844,34 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--ink);overfl
         <textarea class="nlp-area" id="ci" placeholder="تُعدّ المعالجة الآلية للغات الطبيعية أحد أبرز تطبيقات الذكاء الاصطناعي في علوم الحاسوب"></textarea>
         <button class="nlp-run" onclick="runCls()">▶ تصنيف النص</button>
         <div class="nlp-out" id="cr"><div class="out-label">في انتظار الإدخال</div></div>
+      </div>
+
+      <div id="nlp-syn" style="display:none">
+        <label class="nlp-label">الوسم النحوي — تحليل العلاقات والوظائف الإعرابية في الجملة العربية</label>
+        <textarea class="nlp-area" id="syi" placeholder="كتب الطالب المتميز بحثاً علمياً رائعاً في مجال الذكاء الاصطناعي"></textarea>
+        <button class="nlp-run" onclick="runSyn()">▶ التحليل النحوي</button>
+        <div class="nlp-out" id="synr"><div class="out-label">في انتظار الإدخال</div></div>
+      </div>
+
+      <div id="nlp-sem" style="display:none">
+        <label class="nlp-label">الوسم الدلالي — تحليل المعاني والحقول الدلالية والعلاقات المعجمية</label>
+        <textarea class="nlp-area" id="sei" placeholder="الذكاء الاصطناعي علم يحاكي قدرات الإنسان التفكيرية ويُطور أنظمة قادرة على التعلم والتكيف"></textarea>
+        <button class="nlp-run" onclick="runSem()">▶ التحليل الدلالي</button>
+        <div class="nlp-out" id="semr"><div class="out-label">في انتظار الإدخال</div></div>
+      </div>
+
+      <div id="nlp-rhet" style="display:none">
+        <label class="nlp-label">الوسم البلاغي — الكشف عن الصور البيانية والمحسنات البديعية في النص العربي</label>
+        <textarea class="nlp-area" id="ri" placeholder="العلم نور يضيء دروب الحياة، والجهل ظلام يُعمي البصائر والأبصار"></textarea>
+        <button class="nlp-run" onclick="runRhet()">▶ التحليل البلاغي</button>
+        <div class="nlp-out" id="rr"><div class="out-label">في انتظار الإدخال</div></div>
+      </div>
+
+      <div id="nlp-sty" style="display:none">
+        <label class="nlp-label">الوسم الأسلوبي — تحليل الأسلوب اللغوي ومستوياته وخصائصه الأسلوبية</label>
+        <textarea class="nlp-area" id="sti" placeholder="إن التقدم العلمي لا يتحقق إلا بالمثابرة والعمل الدؤوب، فالعلم صرح شامخ يُبنى لبنة لبنة"></textarea>
+        <button class="nlp-run" onclick="runSty()">▶ التحليل الأسلوبي</button>
+        <div class="nlp-out" id="str_out"><div class="out-label">في انتظار الإدخال</div></div>
       </div>
     </div>
     <p style="text-align:center;font-size:11px;color:var(--ink3);margin-top:1rem;font-family:'IBM Plex Mono',monospace">محاكاة تعليمية تجريبية · النماذج الفعلية قيد التطوير بإشراف أ.د. بن جلول مختار ود. وارد عبد القادر</p>
@@ -1806,7 +1838,10 @@ function go(id,btn){
   if(id==='founding') { setTimeout(()=>{ if(window.PPTX_SLIDES && document.getElementById('pptx-main-img') && !document.getElementById('pptx-main-img').src.startsWith('data')) initPptxViewer(); },100); }
 }
 function setNlp(t,btn){
-  ['tok','sent','ner','cls'].forEach(x=>document.getElementById('nlp-'+x).style.display='none');
+  ['tok','sent','ner','cls','syn','sem','rhet','sty'].forEach(x=>{
+    const el=document.getElementById('nlp-'+x);
+    if(el) el.style.display='none';
+  });
   document.getElementById('nlp-'+t).style.display='block';
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1875,6 +1910,215 @@ function runCls(){
     <span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;color:${sc[0].c}">${Math.round(sc[0].s/tot*100)}%</span>
   </div>
   ${sc.map(c=>`<div class="bar-row"><span class="bar-lbl" style="color:${c.c}">${c.n}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.round(c.s/tot*100)}%;background:${c.c}"></div></div><span class="bar-pct">${Math.round(c.s/tot*100)}%</span></div>`).join('')}`;
+}
+
+// ── SYNTACTIC TAGGING ──────────────────────────────────────────────
+function runSyn(){
+  const txt=document.getElementById('syi').value||"كتب الطالب المتميز بحثاً علمياً رائعاً في مجال الذكاء الاصطناعي";
+  const words=txt.trim().split(/\s+/);
+  // Syntactic role detection patterns
+  const ROLES=[
+    {pats:["كتب","يكتب","درس","يدرس","قال","يقول","أسس","طوّر","أنجز","حقق","وصل","أعلن","أفاد","أكد"],role:"فعل",fn:"مسند",c:"#1a1464",bg:"#e8e6ff"},
+    {pats:["الطالب","المعلم","الأستاذ","الباحث","المشروع","الفريق","اللغة","العلم","الذكاء","الإنسان","الجامعة"],role:"فاعل",fn:"مسند إليه",c:"#065f46",bg:"#d1fae5"},
+    {pats:["بحثاً","كتاباً","تقريراً","مقالاً","نموذجاً","برنامجاً","مقرراً","قراراً","حلاً"],role:"مفعول به",fn:"فضلة",c:"#b45309",bg:"#fef3c7"},
+    {pats:["رائعاً","علمياً","ممتازاً","متميزاً","دقيقاً","قيّماً","مهماً","كبيراً","صغيراً","الاصطناعي"],role:"نعت",fn:"تابع",c:"#9f1239",bg:"#ffe4e6"},
+    {pats:["في","من","إلى","عن","على","مع","بين","حول","لدى","عبر","خلال","بعد","قبل","منذ"],role:"حرف جر",fn:"رابط",c:"#4c1d95",bg:"#ede9fe"},
+    {pats:["و","أو","ثم","لكن","بل","إذ","أن","لأن","حتى","إذا","كي","لو"],role:"حرف ربط",fn:"رابط نحوي",c:"#0f766e",bg:"#ccfbf1"},
+  ];
+  const tagged=words.map(w=>{
+    const clean=w.replace(/[،,\.!؟]/g,'');
+    for(const r of ROLES) if(r.pats.some(p=>clean.includes(p))) return{w,role:r.role,fn:r.fn,c:r.c,bg:r.bg};
+    return{w,role:"اسم",fn:"",c:"#374151",bg:"#f3f4f6"};
+  });
+  // Build dependency tree visualization
+  const rows=tagged.map(t=>`
+    <div style="display:inline-flex;flex-direction:column;align-items:center;gap:4px;margin:0 4px 8px;direction:rtl">
+      <span style="background:${t.bg};color:${t.c};border:1px solid ${t.c}33;border-radius:8px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;white-space:nowrap">${t.w}</span>
+      <span style="font-size:9px;color:${t.c};font-family:'IBM Plex Mono',monospace;font-weight:700;letter-spacing:.5px">${t.role}</span>
+      ${t.fn?`<span style="font-size:8px;color:${t.c};opacity:.7;font-family:'Cairo',sans-serif">${t.fn}</span>`:''}
+    </div>`).join('');
+  // Count by role
+  const counts={};
+  tagged.forEach(t=>{counts[t.role]=(counts[t.role]||0)+1;});
+  const legend=Object.entries(counts).map(([role,n])=>{
+    const r=ROLES.find(x=>x.role===role)||{c:"#374151",bg:"#f3f4f6"};
+    return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'Cairo',sans-serif;font-weight:700;color:${r.c}">
+      <span style="width:10px;height:10px;border-radius:2px;background:${r.bg};border:1px solid ${r.c}33;display:inline-block"></span>${role} (${n})</span>`;
+  }).join(' ');
+  document.getElementById('synr').innerHTML=`
+    <div class="out-label">الوسم النحوي — ${words.length} وحدة معجمية</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px;direction:rtl;margin-bottom:1rem;padding:.75rem;background:rgba(0,0,0,.02);border-radius:8px">${rows}</div>
+    <div style="background:rgba(26,20,100,.05);border-radius:8px;padding:.75rem;margin-bottom:.75rem;direction:rtl">
+      <div style="font-size:11px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:6px">التحليل الإسنادي:</div>
+      <div style="font-size:12px;color:var(--ink2);font-family:'Cairo',sans-serif;line-height:1.7">
+        ${tagged.find(t=>t.role==='فعل')?`<span style="color:#1a1464;font-weight:700">الفعل:</span> ${tagged.filter(t=>t.role==='فعل').map(t=>t.w).join('، ')} &nbsp;|&nbsp; `:''}
+        ${tagged.find(t=>t.role==='فاعل')?`<span style="color:#065f46;font-weight:700">الفاعل:</span> ${tagged.filter(t=>t.role==='فاعل').map(t=>t.w).join('، ')} &nbsp;|&nbsp; `:''}
+        ${tagged.find(t=>t.role==='مفعول به')?`<span style="color:#b45309;font-weight:700">المفعول به:</span> ${tagged.filter(t=>t.role==='مفعول به').map(t=>t.w).join('، ')}`:''}
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">${legend}</div>`;
+}
+
+// ── SEMANTIC TAGGING ───────────────────────────────────────────────
+function runSem(){
+  const txt=document.getElementById('sei').value||"الذكاء الاصطناعي علم يحاكي قدرات الإنسان التفكيرية ويُطور أنظمة قادرة على التعلم والتكيف";
+  const words=txt.trim().split(/\s+/);
+  // Semantic fields
+  const FIELDS=[
+    {name:"حقل التقنية والرقمنة",kw:["ذكاء","اصطناعي","رقمي","حاسوب","خوارزمية","بيانات","نموذج","برنامج","تقنية","إلكتروني","رقمنة","شبكة"],c:"#1a1464",bg:"#e8e6ff",icon:"💻"},
+    {name:"حقل المعرفة والعلوم",kw:["علم","بحث","تحقيق","اكتشاف","دراسة","تعلم","معرفة","فكر","تطوير","تحليل","نظرية","منهج"],c:"#065f46",bg:"#d1fae5",icon:"🔬"},
+    {name:"حقل الإنسان والمجتمع",kw:["إنسان","مجتمع","حياة","أسرة","طالب","أستاذ","شعب","وطن","جامعة","مدرسة","إنساني"],c:"#b45309",bg:"#fef3c7",icon:"👥"},
+    {name:"حقل الزمان والمكان",kw:["يوم","ليل","صباح","مساء","الآن","سنة","عام","قرن","مكان","بلد","مدينة","جزائر","تيارت"],c:"#9f1239",bg:"#ffe4e6",icon:"📍"},
+    {name:"حقل الحركة والفعل",kw:["تطور","تقدم","انتقل","وصل","بنى","أسس","طور","نما","ارتفع","انخفض","تحرك"],c:"#4c1d95",bg:"#ede9fe",icon:"⚡"},
+    {name:"حقل الصفات والتقييم",kw:["رائع","ممتاز","جيد","سيء","كبير","صغير","مهم","ضروري","قوي","ضعيف","متميز"],c:"#0f766e",bg:"#ccfbf1",icon:"⭐"},
+  ];
+  // Tag each word
+  const tagged=words.map(w=>{
+    const clean=w.replace(/[،,\.!؟]/g,'');
+    for(const f of FIELDS) if(f.kw.some(k=>clean.includes(k)||k.includes(clean))) return{w,...f};
+    return{w,name:"غير محدد",c:"#6b7280",bg:"#f9fafb",icon:"○"};
+  });
+  // Group by field
+  const fieldGroups={};
+  tagged.forEach(t=>{if(t.name!=="غير محدد"){fieldGroups[t.name]=fieldGroups[t.name]||{...t,words:[]};fieldGroups[t.name].words.push(t.w);}});
+  const wordView=tagged.map(t=>`
+    <span title="${t.name}" style="display:inline-flex;align-items:center;gap:3px;background:${t.bg};color:${t.c};border:1px solid ${t.c}22;border-radius:16px;padding:3px 10px;font-size:12px;font-family:'Cairo',sans-serif;font-weight:600;margin:2px">${t.icon} ${t.w}</span>`).join('');
+  const fieldView=Object.values(fieldGroups).map(f=>`
+    <div style="background:${f.bg};border-radius:10px;padding:.75rem;border-right:3px solid ${f.c}">
+      <div style="font-size:11px;font-weight:700;color:${f.c};font-family:'Amiri',serif;margin-bottom:6px">${f.icon} ${f.name}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">${f.words.map(w=>`<span style="background:rgba(255,255,255,.6);color:${f.c};padding:2px 8px;border-radius:8px;font-size:11px;font-family:'Cairo',sans-serif">${w}</span>`).join('')}</div>
+    </div>`).join('');
+  // Semantic relations
+  const hasAntonym = words.some(w=>['ذكاء','نور'].some(k=>w.includes(k))) && words.some(w=>['جهل','ظلام'].some(k=>w.includes(k)));
+  document.getElementById('semr').innerHTML=`
+    <div class="out-label">الوسم الدلالي — ${words.length} وحدة دلالية</div>
+    <div style="display:flex;flex-wrap:wrap;gap:2px;direction:rtl;margin-bottom:1rem;padding:.75rem;background:rgba(0,0,0,.02);border-radius:8px">${wordView}</div>
+    <div style="font-size:11px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:8px;direction:rtl">الحقول الدلالية المُكتشَفة:</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;direction:rtl;margin-bottom:.875rem">${fieldView||'<div style="color:var(--ink3);font-size:12px;font-family:Cairo,sans-serif">لم تُكتشف حقول دلالية محددة — جرّب نصاً أطول</div>'}</div>
+    ${hasAntonym?`<div style="background:#fff7ed;border-radius:8px;padding:.625rem;border-right:3px solid #b45309;direction:rtl"><span style="font-size:11px;font-weight:700;color:#b45309">⚡ علاقة تضاد:</span> <span style="font-size:11px;color:var(--ink2);font-family:Cairo,sans-serif"> النص يحتوي تضاداً دلالياً واضحاً</span></div>`:''}`;
+}
+
+// ── RHETORICAL TAGGING ─────────────────────────────────────────────
+function runRhet(){
+  const txt=document.getElementById('ri').value||"العلم نور يضيء دروب الحياة، والجهل ظلام يُعمي البصائر والأبصار";
+  const words=txt.trim().split(/\s+/);
+  // Detect rhetorical figures
+  const figures=[];
+  // Simile: كأن، مثل، شبيه، يشبه
+  if(/كأن|مثل|شبيه|يشبه|كمثل/.test(txt)) figures.push({name:"التشبيه",def:"المقارنة بين شيئين بأداة تشبيه صريحة",ex:txt.match(/[^،.]*?(كأن|مثل|شبيه)[^،.]*/)?.[0]||"",c:"#1a1464",bg:"#e8e6ff",icon:"🔵"});
+  // Metaphor: no particle, direct equation
+  if(/(العلم|الجهل|الحياة|الأمل|العقل)\s+(نور|ظلام|بحر|شمس|جبل)/.test(txt)) figures.push({name:"الاستعارة",def:"نقل المعنى بحذف أحد طرفَي التشبيه",ex:txt.match(/(العلم|الجهل|الحياة)\s+(نور|ظلام|بحر)/)?.[0]||"",c:"#065f46",bg:"#d1fae5",icon:"🟢"});
+  // Antithesis: نور/ظلام, علم/جهل, صدق/كذب
+  if(/(نور.*ظلام|ظلام.*نور|علم.*جهل|جهل.*علم|بصر.*عمى|حياة.*موت)/.test(txt)) figures.push({name:"الطباق",def:"الجمع بين لفظين متضادين لتقوية المعنى",ex:"نور / ظلام — طباق إيجاب",c:"#b45309",bg:"#fef3c7",icon:"🟡"});
+  // Repetition: البصائر والأبصار
+  if(/(البصائر.*الأبصار|الأبصار.*البصائر|قلوب.*عقول)/.test(txt)) figures.push({name:"الجناس الناقص",def:"تشابه الألفاظ مع اختلاف في المعنى",ex:"البصائر — الأبصار (جناس اشتقاق)",c:"#9f1239",bg:"#ffe4e6",icon:"🔴"});
+  // Parallelism
+  if(/(و[أ-ي]+ [أ-ي]+ [أ-ي]+،.*و[أ-ي]+)/.test(txt)) figures.push({name:"المقابلة",def:"المقابلة بين معنيين أو أكثر تحقيقاً للتوازن",ex:"",c:"#4c1d95",bg:"#ede9fe",icon:"🟣"});
+  // Rhetorical question
+  if(/[؟]/.test(txt)) figures.push({name:"الاستفهام البلاغي",def:"سؤال لا يُراد به الجواب بل التقرير أو الإنكار",ex:txt.match(/[^.،؟]*؟/)?.[0]||"",c:"#0f766e",bg:"#ccfbf1",icon:"🩵"});
+  // Hyperbole
+  if(/(كل|دائماً|أبداً|لا يزال|ملايين|لا حصر)/.test(txt)) figures.push({name:"المبالغة",def:"تجاوز الحدّ المعتاد في وصف شيء لغرض بلاغي",ex:"",c:"#7c3aed",bg:"#f5f3ff",icon:"⬆"});
+  // Build word display with rhetorical highlighting
+  const rKw={
+    "كأن|مثل|شبيه":"تشبيه","نور|ظلام|بحر|شمس":"استعارة",
+    "البصائر|الأبصار":"جناس","علم|جهل|حياة|موت":"طباق"
+  };
+  const wordDisplay=words.map(w=>{
+    const clean=w.replace(/[،,\.!؟]/g,'');
+    for(const [pats,fig] of Object.entries(rKw)){
+      if(new RegExp(pats).test(clean)) return`<span style="background:rgba(180,83,9,.15);color:#92400e;border:1px solid rgba(180,83,9,.25);border-radius:6px;padding:3px 8px;font-family:'Scheherazade New',serif;font-size:16px;margin:2px;cursor:help" title="${fig}">${w}</span>`;
+    }
+    return`<span style="font-family:'Scheherazade New',serif;font-size:16px;margin:2px;color:var(--ink)">${w}</span>`;
+  }).join(' ');
+  const figCards=figures.map(f=>`
+    <div style="background:${f.bg};border-radius:10px;padding:1rem;border-right:3px solid ${f.c}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;direction:rtl">
+        <span style="font-size:16px">${f.icon}</span>
+        <span style="font-family:'Amiri',serif;font-size:15px;font-weight:700;color:${f.c}">${f.name}</span>
+      </div>
+      <div style="font-size:11px;color:var(--ink2);font-family:'Cairo',sans-serif;line-height:1.6;direction:rtl;margin-bottom:${f.ex?'6px':'0'}">${f.def}</div>
+      ${f.ex?`<div style="font-family:'Scheherazade New',serif;font-size:13px;color:${f.c};background:rgba(255,255,255,.6);border-radius:6px;padding:4px 8px;direction:rtl">«${f.ex}»</div>`:''}
+    </div>`).join('');
+  document.getElementById('rr').innerHTML=`
+    <div class="out-label">الوسم البلاغي — ${figures.length} صورة بلاغية مُكتشَفة</div>
+    <div style="background:rgba(0,0,0,.02);border-radius:10px;padding:1rem;margin-bottom:1rem;direction:rtl;font-family:'Scheherazade New',serif;font-size:17px;line-height:2;text-align:justify">${wordDisplay}</div>
+    ${figures.length?`
+      <div style="font-size:12px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:.75rem;direction:rtl">الصور البلاغية المُكتشَفة:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;direction:rtl">${figCards}</div>`
+    :`<div style="text-align:center;padding:1rem;color:var(--ink3);font-family:'Cairo',sans-serif;font-size:13px;direction:rtl">لم تُكتشف صور بلاغية واضحة — جرّب نصاً يحتوي تشبيهاً أو طباقاً أو استعارة</div>`}`;
+}
+
+// ── STYLISTIC TAGGING ──────────────────────────────────────────────
+function runSty(){
+  const txt=document.getElementById('sti').value||"إن التقدم العلمي لا يتحقق إلا بالمثابرة والعمل الدؤوب، فالعلم صرح شامخ يُبنى لبنة لبنة";
+  const words=txt.trim().split(/\s+/);
+  const sents=txt.split(/[.!؟،]/).filter(s=>s.trim().length>2);
+  const avgWordLen=words.reduce((s,w)=>s+w.length,0)/words.length||1;
+  const longWords=words.filter(w=>w.length>6).length;
+  const shortWords=words.filter(w=>w.length<=3).length;
+  // Style indicators
+  const STYLE_IND=[
+    {name:"التكثيف والإيجاز",kw:["إن","لا","إلا","بل","لكن"],w:0,c:"#1a1464"},
+    {name:"التوسع والإطناب",kw:["و","أيضاً","فضلاً","علاوة","كذلك","بالإضافة"],w:0,c:"#065f46"},
+    {name:"التوكيد والتقرير",kw:["إن","أن","لا شك","بالفعل","حقاً","قطعاً","لا ريب"],w:0,c:"#b45309"},
+    {name:"الشرط والتعليق",kw:["إذا","لو","لولا","حين","عندما","متى","كلما"],w:0,c:"#9f1239"},
+    {name:"الأسلوب الخطابي",kw:["أيها","يا","هيا","تعال","انظر","تأمل","افعل"],w:0,c:"#4c1d95"},
+    {name:"الأسلوب العلمي",kw:["يُعدّ","تُصنَّف","يُشير","يتضح","تُبيّن","وفقاً","حسب"],w:0,c:"#0f766e"},
+  ];
+  words.forEach(w=>{const cl=w.replace(/[،,\.!؟]/g,'');STYLE_IND.forEach(s=>{if(s.kw.some(k=>cl.includes(k)))s.w++;});});
+  const maxW=Math.max(...STYLE_IND.map(s=>s.w),1);
+  // Register analysis
+  const REGISTERS=[
+    {name:"فصيح راقٍ",test:()=>avgWordLen>5&&longWords/words.length>0.4,c:"#1a1464",bg:"#e8e6ff"},
+    {name:"علمي تقني",test:()=>words.some(w=>/(خوارزمية|نموذج|بيانات|ذكاء|تقنية|حوسبة)/.test(w)),c:"#065f46",bg:"#d1fae5"},
+    {name:"أدبي إبداعي",test:()=>words.some(w=>/(نور|ظلام|بحر|شمس|جمال|روح|قلب)/.test(w)),c:"#9f1239",bg:"#ffe4e6"},
+    {name:"خطابي إقناعي",test:()=>words.some(w=>/(يجب|ينبغي|لا بد|من الضروري|يلزم)/.test(w)),c:"#b45309",bg:"#fef3c7"},
+    {name:"وصفي سردي",test:()=>words.some(w=>/(كان|يكون|يمتاز|يتسم|يتميز|يبدو)/.test(w)),c:"#4c1d95",bg:"#ede9fe"},
+  ];
+  const detectedReg=REGISTERS.filter(r=>r.test());
+  // Lexical density
+  const contentWords=words.filter(w=>w.length>3&&!['في','على','من','إلى','عن','مع','بين','هذا','هذه','التي','الذي','الذين','اللذان'].includes(w.replace(/[،,\.!؟]/g,'')));
+  const lexDensity=Math.round(contentWords.length/words.length*100);
+  // Sentence length profile
+  const avgSentLen=sents.length?Math.round(words.length/sents.length):words.length;
+  document.getElementById('str_out').innerHTML=`
+    <div class="out-label">الوسم الأسلوبي — ${words.length} كلمة · ${sents.length} جملة</div>
+    ${detectedReg.length?`
+    <div style="margin-bottom:1rem;direction:rtl">
+      <div style="font-size:11px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:6px">المستوى الأسلوبي المُكتشَف:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${detectedReg.map(r=>`<span style="background:${r.bg};color:${r.c};border:1px solid ${r.c}33;border-radius:16px;padding:4px 14px;font-size:12px;font-family:'Cairo',sans-serif;font-weight:700">${r.name}</span>`).join('')}</div>
+    </div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem;direction:rtl">
+      <div style="background:var(--royal-l);border-radius:10px;padding:.875rem;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--royal);font-family:'Amiri',serif">${lexDensity}%</div>
+        <div style="font-size:9px;color:var(--ink3);font-family:'IBM Plex Mono',monospace;margin-top:3px">الكثافة المعجمية</div>
+      </div>
+      <div style="background:#fef3c7;border-radius:10px;padding:.875rem;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:#b45309;font-family:'Amiri',serif">${Math.round(avgWordLen*10)/10}</div>
+        <div style="font-size:9px;color:var(--ink3);font-family:'IBM Plex Mono',monospace;margin-top:3px">متوسط طول الكلمة</div>
+      </div>
+      <div style="background:#d1fae5;border-radius:10px;padding:.875rem;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:#065f46;font-family:'Amiri',serif">${avgSentLen}</div>
+        <div style="font-size:9px;color:var(--ink3);font-family:'IBM Plex Mono',monospace;margin-top:3px">متوسط طول الجملة</div>
+      </div>
+    </div>
+    <div style="margin-bottom:.875rem;direction:rtl">
+      <div style="font-size:11px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:8px">مؤشرات الأسلوب:</div>
+      ${STYLE_IND.map(s=>`
+        <div class="bar-row" style="margin-bottom:5px">
+          <span class="bar-lbl" style="color:${s.c};min-width:140px">${s.name}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${s.w?Math.round(s.w/maxW*100):2}%;background:${s.c}"></div></div>
+          <span class="bar-pct" style="color:${s.c}">${s.w}</span>
+        </div>`).join('')}
+    </div>
+    <div style="background:rgba(26,20,100,.05);border-radius:10px;padding:.875rem;direction:rtl">
+      <div style="font-size:11px;font-weight:700;color:var(--royal);font-family:'Amiri',serif;margin-bottom:6px">الخلاصة الأسلوبية:</div>
+      <div style="font-size:12px;color:var(--ink2);font-family:'Cairo',sans-serif;line-height:1.7">
+        ${lexDensity>60?'النص غني معجمياً مما يدل على الكثافة المعلوماتية العالية. ':'النص يحوي نسبة معقولة من الوحدات الوظيفية. '}
+        ${avgWordLen>5?'استخدام الكلمات الطويلة يُشير إلى الأسلوب الرسمي الفصيح. ':'الكلمات القصيرة تُيسّر الفهم وتُعزّز الوضوح. '}
+        ${avgSentLen>8?'الجمل الطويلة تعكس أسلوب التعقيد والتركيب.':'الجمل القصيرة توحي بالأسلوب المباشر المقتضب.'}
+      </div>
+    </div>`;
 }
 function fRepo(type,btn){
   document.querySelectorAll('.rfbtn').forEach(b=>b.classList.remove('active'));
@@ -2191,7 +2435,12 @@ function setLang(lang, btn) {
   safeSet('#nlp .section-eyebrow', t.nlp_eyebrow);
   safeSet('#nlp .section-title', t.nlp_title);
   const ntabs = document.querySelectorAll('.ntab');
-  if(ntabs.length>=4){ntabs[0].textContent=t.nlp_tab1;ntabs[1].textContent=t.nlp_tab2;ntabs[2].textContent=t.nlp_tab3;ntabs[3].textContent=t.nlp_tab4;}
+  if(ntabs.length>=4){ntabs[0].textContent=t.nlp_tab1;ntabs[1].textContent=t.nlp_tab2;ntabs[2].textContent=t.nlp_tab3;ntabs[3].textContent=t.nlp_tab4;
+    if(ntabs[4]) ntabs[4].textContent=t.nlp_tab5||'الوسم النحوي';
+    if(ntabs[5]) ntabs[5].textContent=t.nlp_tab6||'الوسم الدلالي';
+    if(ntabs[6]) ntabs[6].textContent=t.nlp_tab7||'الوسم البلاغي';
+    if(ntabs[7]) ntabs[7].textContent=t.nlp_tab8||'الوسم الأسلوبي';
+  }
   const nlabels = document.querySelectorAll('.nlp-label');
   if(nlabels.length>=4){nlabels[0].textContent=t.nlp_lbl1;nlabels[1].textContent=t.nlp_lbl2;nlabels[2].textContent=t.nlp_lbl3;nlabels[3].textContent=t.nlp_lbl4;}
   const nphs = document.querySelectorAll('.nlp-area');
